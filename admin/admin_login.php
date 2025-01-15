@@ -1,23 +1,25 @@
 <?php
-require "koneksi.php";
+require "../koneksi.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nik = $_POST['nik'];
+    $id_petugas = isset($_POST['id_petugas']) ? $_POST['id_petugas'] : ''; // defaultkan id_petugas menjadi string kosong jika tidak ada
     $username = $_POST['username'];
     $password = md5($_POST['password']);
 
-    //fungsi execute_query hanya bisa digunakan pada PHP 8.2
-    $sql = "SELECT * FROM masyarakat WHERE nik=? AND username =? AND password=?";
-    $row = $koneksi->execute_query($sql, [$nik, $username, $password]);
+    $sql = "SELECT * FROM petugas WHERE id_petugas=? AND username =? AND password=?";
+    $stmt = $koneksi->prepare($sql); // lebih baik menggunakan prepare statement untuk menghindari SQL Injection
+    $stmt->bind_param('sss', $id_petugas, $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (mysqli_num_rows($row) == 1) {
+    if ($result->num_rows == 1) {
         session_start();
-        $_SESSION['nik'] = $nik;
-        header("location:index.php");
+        header("location:admin/admin.php");
     } else {
         echo "<script>alert('Gagal Login')</script>";
     }
 }
+
 
 ?>
 
@@ -32,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="" method="post" class="form-login">
         <p>Silahkan Login</p>
         <div class="form-item">
-            <label for="nik">NIK</label>
-            <input type="text" name="nik" id="nik" required>
+            <label for="id_petugas">Id Petugas</label>
+            <input type="text" name="id_petugas" id="id_petugas" required>
         </div>
         <div class="form-item">
             <label for="username">Username</label>
@@ -44,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="password" name="password" id="password" required>
         </div>
         <button type="submit">Login</button>
-        <a href="register.php">Register</a>
+        <a href="admin/admin_regis.php">Register</a>
     </form>
 </body>
 
