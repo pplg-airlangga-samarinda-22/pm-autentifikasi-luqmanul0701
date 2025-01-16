@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $status = 0;
 
     $sql = "INSERT INTO pengaduan (tgl_pengaduan, nik, isi_laporan, foto, status) values (?, ?, ?, ?, ?)";
-    $koneksi->execute_query($sql, [$tanggal, $nik, $laporan, $foto, $status]);
+    $row = $koneksi->execute_query($sql, [$tanggal, $nik, $laporan, $foto, $status]);
 
     if (!empty($foto)) {
         move_uploaded_file($_FILES['foto']['tmp_name'], 'gambar/' . $_FILES['foto']['name']);

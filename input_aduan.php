@@ -31,19 +31,19 @@ var_dump($_SESSION);
         $sql = "SELECT * FROM pengaduan WHERE nik=? order by id_pengaduan desc";
         $pengaduan = $koneksi->execute_query($sql, [$nik])->fetch_all(MYSQLI_ASSOC);
         foreach ($pengaduan as $item) {
-     
+
         ?>
-        <tr>
-            <td><?= ++$no; ?>></td>
-            <td><?= $item['tgl_pengaduan']; ?>></td>
-            <td><?= $item['isi_laporan']; ?>></td>
-            <td><?= $item['status'] == '0' ? 'menunggu' : (($item['status'] == 'proses') ? 'diproses' : 'selesai'); ?>></td>
-            <td><a href='edit-aduan.php?id=<?= $item['id_pengaduan'] ?>'>EDIT</a></td>
-        </tr>
+            <tr>
+                <td><?= ++$no; ?>></td>
+                <td><?= $item['tgl_pengaduan']; ?>></td>
+                <td><?= $item['isi_laporan']; ?>></td>
+                <td><?= $item['status'] == '0' ? 'menunggu' : (($item['status'] == 'proses') ? 'diproses' : 'selesai'); ?>></td>
+                <td><a href='edit_aduan.php?id=<?= $item['id_pengaduan'] ?>'>EDIT</a></td>
+            </tr>
     </tbody>
-    <?php
-    }
-    ?>
+<?php
+        }
+?>
 </body>
 
 </html>
