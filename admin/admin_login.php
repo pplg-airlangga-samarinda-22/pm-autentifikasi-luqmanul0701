@@ -2,25 +2,23 @@
 require "../koneksi.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id_petugas = isset($_POST['id_petugas']) ? $_POST['id_petugas'] : ''; // defaultkan id_petugas menjadi string kosong jika tidak ada
-    $username = $_POST['username'];
+    session_start();
+    $_SESSION['username'] = $_POST['username'];
     $password = md5($_POST['password']);
 
-    $sql = "SELECT * FROM petugas WHERE id_petugas=? AND username =? AND password=?";
-    $stmt = $koneksi->prepare($sql); // lebih baik menggunakan prepare statement untuk menghindari SQL Injection
-    $stmt->bind_param('sss', $id_petugas, $username, $password);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $sql = "SELECT * FROM petugas WHERE username =? AND password=?";
+    $row = $koneksi->execute_query($sql, [$username, $password]);
 
-    if ($result->num_rows == 1) {
+    if (mysqli_num_rows($row) == 1) {
         session_start();
-        header("location:admin/admin.php");
+        $_SESSION['username'] = $username;
+        header("location:admin.php");
     } else {
         echo "<script>alert('Gagal Login')</script>";
     }
+    header("Location: admin.php");
+    exit;
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -32,11 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <form action="" method="post" class="form-login">
-        <p>Silahkan Login</p>
-        <div class="form-item">
-            <label for="id_petugas">Id Petugas</label>
-            <input type="text" name="id_petugas" id="id_petugas" required>
-        </div>
+        <h2>Silahkan Login</h2>
         <div class="form-item">
             <label for="username">Username</label>
             <input type="text" name="username" id="username" required>
@@ -46,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="password" name="password" id="password" required>
         </div>
         <button type="submit">Login</button>
-        <a href="admin/admin_regis.php">Register</a>
     </form>
 </body>
 
